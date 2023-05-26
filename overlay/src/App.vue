@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
+
+const logs = ref([]);
 
 const socket = new WebSocket('ws://localhost:8001');
 const contactServer = () => {
@@ -10,19 +12,17 @@ const contactServer = () => {
 
 onMounted(() => {
 
-
   socket.addEventListener('open', function (event) {
     socket.send('Connection Established');
   });
 
   socket.addEventListener('message', function (event) {
-    console.log(event.data);
+    logs.value.push(event.data);
   });
 
   socket.addEventListener('close', function (event) {
     console.error('Connection closed');
   });
-
 
 });
 </script>
@@ -33,12 +33,13 @@ onMounted(() => {
 
     <div class="wrapper">
       <button @click="contactServer">Send</button>
-      <HelloWorld msg="You did it!" />
     </div>
   </header>
 
   <main>
-    <TheWelcome />
+    <ul v-if="logs" style="overflow: hidden;">
+      <li v-for="log in logs" class="animate__animated animate__backInUp">{{ log }}</li>
+    </ul>
   </main>
 </template>
 
