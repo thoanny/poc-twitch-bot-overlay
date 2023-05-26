@@ -5,7 +5,7 @@ import functools
 
 
 def start_server():
-    port = 8765
+    port = 8000
     handler = http.server.SimpleHTTPRequestHandler
     handler.extensions_map.update({
         ".js": "text/javascript",
