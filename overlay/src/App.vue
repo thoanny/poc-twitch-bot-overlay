@@ -1,13 +1,15 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
 
 const logs = ref([]);
 
 const socket = new WebSocket('ws://localhost:8001');
-const contactServer = () => {
+function contactServer() {
   socket.send("Initialize");
+}
+
+function resetLogs() {
+  logs.value = [];
 }
 
 onMounted(() => {
@@ -20,54 +22,25 @@ onMounted(() => {
     logs.value.push(event.data);
   });
 
-  socket.addEventListener('close', function (event) {
-    console.error('Connection closed');
+  socket.addEventListener('close', function () {
+    logs.value.push('Connection closed');
   });
 
 });
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <button @click="contactServer">Send</button>
-    </div>
-  </header>
-
-  <main>
-    <ul v-if="logs" style="overflow: hidden;">
-      <li v-for="log in logs" class="animate__animated animate__backInUp">{{ log }}</li>
-    </ul>
-  </main>
+  <div class="max-w-xl flex gap-2 mx-auto justify-center p-6 pb-0">
+    <button @click="contactServer">Send</button>
+    <button @click="resetLogs">Reset</button>
+  </div>
+  <ul v-if="logs" class="overflow-hidden flex flex-col gap-3 max-w-xl mx-auto p-6">
+    <li v-for="log in logs" class="animate__animated animate__fadeIn border rounded shadow-lg p-2 block">{{ log }}</li>
+  </ul>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+button {
+  @apply py-2 px-3 bg-blue-500 text-white font-semibold rounded w-full;
 }
 </style>
