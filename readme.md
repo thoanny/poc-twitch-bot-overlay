@@ -1,6 +1,8 @@
 # PoC: Twitch Bot & Overlay
 
-Configurer TwitchIO, en créant un fichier `.env` avec :
+## TwitchIO
+
+Créer un fichier `.env` :
 
 ```
 TMI_TOKEN= # https://twitchapps.com/tmi/
@@ -10,9 +12,19 @@ BOT_PREFIX= # Préfixe des commandes ("!" par exemple)
 CHANNEL= # Nom de la chaîne
 ```
 
-Pour lancer le serveur Python (http://localhost:8000) :
+## Lancer le script Python
 
 ``py main.py``
+
+## Overlay
+
+* URL : `http://localhost:8000`
+
+## Websocket
+
+* URL : `ws://localhost:8001`
+
+## VueJS
 
 Pour travailler sur l'overlay (http://localhost:5173) :
 
@@ -21,7 +33,7 @@ cd overlay
 npm run dev
 ```
 
-Le serveur Pyhon pointe vers `overlay/dist`, il faut donc build l'application Vue pour que les modifications soient visibles :
+Il faut build l'application Vue pour que les modifications soient visibles dans l'overlay :
 
 ```
 cd overlay

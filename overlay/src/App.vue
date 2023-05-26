@@ -1,6 +1,30 @@
 <script setup>
+import { onMounted } from 'vue';
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
+
+const socket = new WebSocket('ws://localhost:8001');
+const contactServer = () => {
+  socket.send("Initialize");
+}
+
+onMounted(() => {
+
+
+  socket.addEventListener('open', function (event) {
+    socket.send('Connection Established');
+  });
+
+  socket.addEventListener('message', function (event) {
+    console.log(event.data);
+  });
+
+  socket.addEventListener('close', function (event) {
+    console.error('Connection closed');
+  });
+
+
+});
 </script>
 
 <template>
@@ -8,6 +32,7 @@ import TheWelcome from './components/TheWelcome.vue'
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
+      <button @click="contactServer">Send</button>
       <HelloWorld msg="You did it!" />
     </div>
   </header>

@@ -1,9 +1,15 @@
+import asyncio
+import functools
 import http.server
 import socketserver
 import threading
-import functools
+import websockets
+
 from dotenv import dotenv_values
 from twitchio.ext import commands
+from websockets.server import serve
+
+CONNECTIONS = set()
 
 config = dotenv_values(".env")
 
@@ -29,13 +35,27 @@ def start_server():
         httpd.serve_forever()
 
 
+async def ws_handler(websocket):
+    CONNECTIONS.add(websocket)
+    async for message in websocket:
+        await websocket.send(message)
+
+
+async def ws_start():
+    port = 8001
+    async with serve(ws_handler, "localhost", port):
+        print("WS Server started at localhost:" + str(port))
+        await asyncio.Future()
+
+
 @bot.event
 async def event_ready():
-    print(f"{config['BOT_NICK']} is online!")
+    print(f'Bot is online!')
 
 
 @bot.command(name='test')
 async def test(ctx):
+    websockets.broadcast(CONNECTIONS, 'Test passed!')
     await ctx.send('test passed!')
 
 
@@ -43,7 +63,13 @@ def print_hi(name):
     print(f'Hi, {name}')
 
 
+def run_bot():
+    bot.run()
+
+
 if __name__ == '__main__':
     print_hi('PyCharm')
     threading.Thread(target=start_server).start()
-    bot.run()
+    threading.Thread(target=run_bot).start()
+    asyncio.run(ws_start())
+
